@@ -39,6 +39,44 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+        // a reuse identifier, which will be reused in annotation views
+        let identifier = "Capital"
 
+        // whether the annotation is 1 of the 5 Capital objects
+        if annotation is Capital {
+            // dequeue an annotation view from the map view's pool of unused views
+            var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
+            if annotationView == nil {
+                // if there's no reusable view, create a new one using MKPinAnnotationView
+                annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                // set canShowCallout to true, which triggers the popup with the city name
+                annotationView!.canShowCallout = true
+
+                // create a UIButton using the built-in .DetailDisclosure type.
+                // this is a small blue "i" symbol with a circle around it
+                let btn = UIButton(type: .DetailDisclosure)
+                annotationView!.rightCalloutAccessoryView = btn
+            } else {
+                // if there's a reusable view, update the view to use a different annotation
+                annotationView!.annotation = annotation
+            }
+
+            return annotationView
+        }
+
+        // if the annotation is not a Capital object, return nil so iOS uses a default view.
+        return nil
+    }
+
+    func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
+        // the annotation view contains the annotation property, which contains the Capital object
+        let capital = view.annotation as! Capital
+
+        // show the title and information of the capital via a UIAlertController
+        let ac = UIAlertController(title: capital.title, message: capital.info, preferredStyle: .Alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        presentViewController(ac, animated: true, completion: nil)
+    }
 }
 
