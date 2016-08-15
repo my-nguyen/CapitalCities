@@ -49,21 +49,32 @@ class ViewController: UIViewController {
         // whether the annotation is 1 of the 5 Capital objects
         if annotation is Capital {
             // dequeue an annotation view from the map view's pool of unused views
-            var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
-            if annotationView == nil {
-                // if there's no reusable view, create a new one using MKPinAnnotationView
-                annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                // set canShowCallout to true, which triggers the popup with the city name
-                annotationView!.canShowCallout = true
+            var annotationView: MKPinAnnotationView! = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier) as? MKPinAnnotationView
+            // if there's no reusable view, create a new one using MKPinAnnotationView
+            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            // set canShowCallout to true, which triggers the popup with the city name
+            annotationView.canShowCallout = true
 
-                // create a UIButton using the built-in .DetailDisclosure type.
-                // this is a small blue "i" symbol with a circle around it
-                let btn = UIButton(type: .DetailDisclosure)
-                annotationView!.rightCalloutAccessoryView = btn
-            } else {
-                // if there's a reusable view, update the view to use a different annotation
-                annotationView!.annotation = annotation
+            // set different colors to different capitals
+            let capital = annotation as! Capital
+            // if capital.title == "Paris" {
+            switch capital.title! {
+            case "London":
+                annotationView.pinTintColor = UIColor.brownColor()
+            case "Oslo":
+                annotationView.pinTintColor = UIColor.yellowColor()
+            case "Paris":
+                annotationView.pinTintColor = UIColor.greenColor()
+            case "Rome":
+                annotationView.pinTintColor = UIColor.redColor()
+            default:
+                annotationView.pinTintColor = UIColor.blueColor()
             }
+
+            // create a UIButton using the built-in .DetailDisclosure type.
+            // this is a small blue "i" symbol with a circle around it
+            let btn = UIButton(type: .DetailDisclosure)
+            annotationView.rightCalloutAccessoryView = btn
 
             return annotationView
         }
