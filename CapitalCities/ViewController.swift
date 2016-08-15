@@ -16,6 +16,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // add a navigation bar button to select map type
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Map Type", style: .Plain, target: self, action: #selector(presentMapTypeOptions))
+
         // these Capital objects conform to the MKAnnotation protocol, so they can be sent
         // to map view for display via addAnnotation()
         let london = Capital(title: "London", coordinate: CLLocationCoordinate2D(latitude: 51.507222, longitude: -0.1275), info: "Home to the 2012 Summer Olympics.")
@@ -77,6 +80,27 @@ class ViewController: UIViewController {
         let ac = UIAlertController(title: capital.title, message: capital.info, preferredStyle: .Alert)
         ac.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
         presentViewController(ac, animated: true, completion: nil)
+    }
+
+    func presentMapTypeOptions() {
+        let alertController = UIAlertController(title: "MKMapType", message: nil, preferredStyle: .ActionSheet)
+        let dictionary = [
+            "Standard": MKMapType.Standard, "Hybrid": MKMapType.Hybrid, "Satellite": MKMapType.Satellite
+        ]
+        // add a button for each map type
+        for (key, value) in dictionary {
+            alertController.addAction(UIAlertAction(title: key, style: .Default) { [unowned self] (action: UIAlertAction) in
+                self.mapView.mapType = value
+                })
+        }
+        // add a Cancel button
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+
+    func selectMapType(action: UIAlertAction) {
+        mapView.mapType = .Standard
     }
 }
 
